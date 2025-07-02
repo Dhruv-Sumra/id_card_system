@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import ParaSportsIcons from '../components/ParaSportsIcons';
 import { ScreenReaderContext } from '../components/ScreenReader';
+import logo1 from '../assets/logo1.png';
 
   const videoUrl = '/src/assets/backgroundVideo.mp4'
 
@@ -100,8 +101,8 @@ const Home = () => {
               <div className="relative">
                 <div className="w-24 h-24 bg-white rounded-2xl shadow-lg flex items-center justify-center border border-gray-200">
                   <img 
-                    src="https://w7.pngwing.com/pngs/519/325/png-transparent-computer-icons-wheelchair-sport-disability-wheelchair-text-sport-logo.png"
-                    alt="Para Sports Wheelchair"
+                    src={logo1}
+                    alt="Para Sports Logo"
                     className="w-16 h-16 object-contain"
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -135,10 +136,9 @@ const Home = () => {
                 Register New Player
                 <ArrowRight size={20} />
               </Link>
-              
-              <Link to="/players" className="btn-secondary text-lg px-8 py-4">
+              <Link to="/id-card-details" className="btn-secondary text-lg px-8 py-4">
                 <Users size={24} />
-                View All Players
+                ID Card Details
                 <ArrowRight size={20} />
               </Link>
             </div>
@@ -280,11 +280,6 @@ const Home = () => {
               <Link to="/register" className="btn-secondary text-lg px-8 py-4">
                 <UserPlus size={24} />
                 Register Now
-                <ArrowRight size={20} />
-              </Link>
-              <Link to="/players" className="btn-outline text-lg px-8 py-4 text-white border-white hover:bg-white hover:text-blue-600">
-                <Users size={24} />
-                Browse Players
                 <ArrowRight size={20} />
               </Link>
             </div>

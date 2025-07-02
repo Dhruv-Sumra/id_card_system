@@ -34,7 +34,7 @@ const AccessibleInput = React.forwardRef(({
       />
       {error && (
         <span id={`${props.id || 'input'}-error`}>
-          {error}
+          {typeof error === 'object' && error.message ? error.message : error}
         </span>
       )}
     </div>

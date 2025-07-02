@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Users, UserPlus, Home, Trophy, User, Heart, Menu, X } from 'lucide-react';
-import ParaSportsIcons from './ParaSportsIcons';  
+import ParaSportsIcons from './ParaSportsIcons';
+import logo1 from '../assets/logo1.png';  
 
 const Navbar = () => {
   const location = useLocation();
@@ -24,7 +25,7 @@ const Navbar = () => {
   const navLinks = [
     { path: '/', label: 'Home', icon: Home },
     { path: '/register', label: 'Register Player', icon: UserPlus },
-    { path: '/players', label: 'View Players', icon: Users },
+    { path: '/id-card-details', label: 'ID Card Details', icon: Users },
   ];
 
   return (
@@ -36,8 +37,8 @@ const Navbar = () => {
             <div className="relative">
               <div className="flex items-center justify-center w-12 h-12 bg-white rounded-lg shadow-sm group-hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-200">
                 <img 
-                  src="https://w7.pngwing.com/pngs/519/325/png-transparent-computer-icons-wheelchair-sport-disability-wheelchair-text-sport-logo.png"
-                  alt="Para Sports Wheelchair"
+                  src={logo1}
+                  alt="Para Sports Logo"
                   className="w-8 h-8 object-contain"
                   onError={(e) => {
                     // Fallback to User icon if image fails to load
@@ -90,7 +91,7 @@ const Navbar = () => {
             className="md:hidden btn-icon-secondary"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          </button> 
         </div>
 
         {/* Mobile Navigation */}

@@ -6,6 +6,8 @@ import { Upload, User, MapPin, Trophy, Heart, Shield, Mail, Phone, UserPlus, Glo
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
+import logo1 from '../../../backend/utils/logo1.png';
+import logo2 from '../../../backend/utils/logo2.png';
 
 // Import new accessible components
 import ScreenReader from '../components/ScreenReader';
@@ -35,6 +37,9 @@ const useDebounce = (value, delay) => {
 
   return debouncedValue;
 };
+
+const apiBase = import.meta.env.VITE_API_URL || '';
+const url = apiBase ? `${apiBase}/api/players` : '/api/players';
 
 const PlayerRegistration = React.memo(() => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -115,6 +120,29 @@ const PlayerRegistration = React.memo(() => {
     { value: 'Male', label: 'Male' },
     { value: 'Female', label: 'Female' },
     { value: 'Other', label: 'Other' }
+  ], []);
+
+  // Add disability classification options with useMemo
+  const disabilityClassificationOptions = useMemo(() => [
+    { value: 'T/F11-T/F13', label: 'T/F11-T/F13 (Visual Impairment)' },
+    { value: 'T/F20', label: 'T/F20 (Intellectual Impairment)' },
+    { value: 'T/F31-T/F38', label: 'T/F31-T/F38 (Coordination Impairments)' },
+    { value: 'T/F40-T/F41', label: 'T/F40-T/F41 (Short Stature)' },
+    { value: 'T/F42-T/F47', label: 'T/F42-T/F47 (Limb Deficiency, Leg Length Difference, Impaired Muscle Power or Impaired Range of Movement)' },
+    { value: 'T/F51-T/F57', label: 'T/F51-T/F57 (Wheelchair Track & Field)' },
+    { value: 'S1-S10', label: 'S1-S10 (Physical Impairment - Swimming)' },
+    { value: 'S11-S13', label: 'S11-S13 (Visual Impairment - Swimming)' },
+    { value: 'S14', label: 'S14 (Intellectual Impairment - Swimming)' },
+    { value: 'SB1-SB9', label: 'SB1-SB9 (Breaststroke - Swimming)' },
+    { value: 'SM1-SM10', label: 'SM1-SM10 (Medley - Swimming)' },
+    { value: 'LW1-LW12', label: 'LW1-LW12 (Winter Sports)' },
+    { value: 'B1-B3', label: 'B1-B3 (Blind/Visually Impaired)' },
+    { value: 'SH1, SH2', label: 'SH1, SH2 (Shooting)' },
+    { value: 'C1-C5', label: 'C1-C5 (Cycling)' },
+    { value: 'H1-H5', label: 'H1-H5 (Handcycling)' },
+    { value: 'T1-T2', label: 'T1-T2 (Tricycle)' },
+    { value: 'PT1-PT5', label: 'PT1-PT5 (Paratriathlon)' },
+    { value: 'Other', label: 'Other (please specify)' }
   ], []);
 
   // Memoize form translations to prevent re-creation
@@ -380,6 +408,7 @@ const PlayerRegistration = React.memo(() => {
     
     try {
       console.log('Form data before submission:', data);
+      console.log('Passport Number:', data.passportNumber);
       console.log('Date of Birth (raw):', data.dateOfBirth);
       console.log('Date of Birth (formatted):', data.dateOfBirth ? new Date(data.dateOfBirth).toISOString() : null);
       console.log('Experience Level:', data.experienceLevel);
@@ -400,6 +429,7 @@ const PlayerRegistration = React.memo(() => {
         gender: data.gender,
         email: data.email,
         phone: data.phone,
+        passportNumber: data.passportNumber,
         
         // Address Information - fix field names
         address: {
@@ -468,11 +498,11 @@ const PlayerRegistration = React.memo(() => {
         console.log(`${key}:`, value);
       }
       
-      const response = await axios.post('http://localhost:5000/api/players', formData, {
+      const response = await axios.post(url, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-        timeout: 30000, // 30 second timeout
+        timeout: 30000,
       });
       
       toast.success('Player registered successfully! ID card has been sent to your email.');
@@ -505,7 +535,7 @@ const PlayerRegistration = React.memo(() => {
               {/* Header with language switcher */}
               <div className="relative text-center mb-8">
                 {/* Para Sports Decorative Images - Positioned around the header */}
-                <img 
+                {/* <img 
                   src="https://png.pngtree.com/png-clipart/20230303/original/pngtree-paralympic-sports-basketball-png-image_8970272.png" 
                   alt="Para Sports Basketball" 
                   className="absolute top-6 right-6 w-20 h-20 object-contain opacity-60"
@@ -535,21 +565,15 @@ const PlayerRegistration = React.memo(() => {
                   className="absolute bottom-4 left-4 w-20 h-20 object-contain opacity-60"
                   onError={(e) => {
                     e.target.style.display = 'none';
-                  }}
-                />
+                  }} */}
+                {/* /> */}
                 
-                <div className="flex items-center justify-center gap-3 mb-4 pt-8 pb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg flex items-center justify-center">
-                    <UserPlus size={32} className="text-white" />
-                  </div>
-                  <div>
-                    <h1 className="responsive-heading font-display font-bold text-blue-900">
-                      {translateFormText('Para Sports Players Registration Form')}
-                    </h1>
-                    <p className="responsive-text text-gray-600 mt-2">
-                      {translateFormText('Complete the form below to register as a para sports player')}
-                    </p>
-                  </div>
+                <div className="flex items-center justify-center gap-2 mb-8 px-2">
+                  <img src={logo1} alt="Logo 1" className="h-10 w-auto sm:h-14 md:h-[100px] flex-shrink-0" />
+                  <h1 className="text-lg sm:text-2xl md:text-4xl font-bold text-center text-gray-800 flex-1 px-2 break-words whitespace-normal leading-tight max-w-xs sm:max-w-md md:max-w-full">
+                    Para Sports Players Registration
+                  </h1>
+                  <img src={logo2} alt="Logo 2" className="h-10 w-auto sm:h-14 md:h-[100px] flex-shrink-0" />
                 </div>
                 
                 {/* Language Switcher */}
@@ -593,93 +617,79 @@ const PlayerRegistration = React.memo(() => {
                     {translateFormText('Personal Information')}
                   </h2>
                   
-                  <div className="form-grid">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                     <AccessibleInput
                       label={translateFormText('First Name')}
-                      fieldKey="firstName"
-                      {...register('firstName', { required: 'First name is required' })}
-                      error={errors.firstName?.message}
-                      speak={speak}
-                      speakField={speakField}
-                      isAudioEnabled={isAudioEnabled}
-                      required
-                      className="input-field"
+                      id="firstName"
+                      {...register('firstName', { required: true })}
+                      error={errors.firstName}
+                      autoComplete="given-name"
+                      onFocus={() => speakField('First Name')}
+                      className="w-full"
                     />
-                    
                     <AccessibleInput
                       label={translateFormText('Last Name')}
-                      fieldKey="lastName"
-                      {...register('lastName', { required: 'Last name is required' })}
-                      error={errors.lastName?.message}
-                      speak={speak}
-                      speakField={speakField}
-                      isAudioEnabled={isAudioEnabled}
-                      required
-                      className="input-field"
+                      id="lastName"
+                      {...register('lastName', { required: true })}
+                      error={errors.lastName}
+                      autoComplete="family-name"
+                      onFocus={() => speakField('Last Name')}
+                      className="w-full"
                     />
                   </div>
-                  
-                  <div className="form-grid-full">
+                  <div className="mb-4">
                     <AccessibleInput
                       label={translateFormText('Email Address')}
-                      fieldKey="email"
-                      type="email"
-                      {...register('email', { 
-                        required: 'Email is required',
-                        pattern: {
-                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                          message: 'Invalid email address'
-                        }
-                      })}
-                      error={errors.email?.message}
-                      speak={speak}
-                      speakField={speakField}
-                      isAudioEnabled={isAudioEnabled}
-                      required
-                      className="input-field"
-                    />
-                    
-                    <AccessibleInput
-                      label={translateFormText('Phone Number')}
-                      fieldKey="phone"
-                      type="tel"
-                      {...register('phone', { required: 'Phone number is required' })}
-                      error={errors.phone?.message}
-                      speak={speak}
-                      speakField={speakField}
-                      isAudioEnabled={isAudioEnabled}
-                      required
-                      className="input-field"
+                      id="email"
+                      {...register('email', { required: true })}
+                      error={errors.email}
+                      autoComplete="email"
+                      onFocus={() => speakField('Email Address')}
+                      className="w-full"
                     />
                   </div>
-
-                  <div className="form-grid-full">
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {translateFormText('Date of Birth')}
-                        <span className="text-red-500 ml-1">*</span>
-                      </label>
-                      <DatePicker
-                        selected={watch('dateOfBirth')}
-                        onChange={(date) => setValue('dateOfBirth', date)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 transition-colors ${
-                          errors.dateOfBirth 
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
-                        }`}
-                        placeholderText={translateFormText('Select date of birth')}
-                        dateFormat="dd/MM/yyyy"
-                        maxDate={new Date()}
-                        showYearDropdown
-                        showMonthDropdown
-                        dropdownMode="select"
-                        required
-                      />
-                      {errors.dateOfBirth && (
-                        <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth.message}</p>
+                  <div className="mb-4">
+                    <AccessibleInput
+                      label={translateFormText('Phone Number')}
+                      id="phone"
+                      {...register('phone', { required: true })}
+                      error={errors.phone}
+                      autoComplete="tel"
+                      onFocus={() => speakField('Phone Number')}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <AccessibleInput
+                      label="Passport Number"
+                      id="passportNumber"
+                      {...register('passportNumber')}
+                      error={errors.passportNumber}
+                      autoComplete="off"
+                      onFocus={() => speakField('Passport Number')}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <Controller
+                      name="dateOfBirth"
+                      control={control}
+                      render={({ field }) => (
+                        <DatePicker
+                          selected={field.value}
+                          onChange={field.onChange}
+                          dateFormat="yyyy-MM-dd"
+                          placeholderText={translateFormText('Select date of birth')}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          maxDate={new Date()}
+                          showYearDropdown
+                          showMonthDropdown
+                          dropdownMode="select"
+                        />
                       )}
-                    </div>
-
+                    />
+                  </div>
+                  <div className="mb-4">
                     <Controller
                       name="gender"
                       control={control}
@@ -689,14 +699,12 @@ const PlayerRegistration = React.memo(() => {
                           label={translateFormText('Gender')}
                           options={genderOptions}
                           value={field.value}
-                          onChange={(option) => field.onChange(option?.value || '')}
-                          error={errors.gender?.message}
-                          speak={speak}
-                          speakField={speakField}
-                          isAudioEnabled={isAudioEnabled}
-                          required
-                          className="select-field"
+                          onChange={option => field.onChange(option.value)}
+                          isClearable
                           placeholder={translateFormText('Select gender')}
+                          error={errors.gender}
+                          onFocus={() => speakField('Gender')}
+                          className="w-full"
                         />
                       )}
                     />
@@ -980,17 +988,22 @@ const PlayerRegistration = React.memo(() => {
                       )}
                     />
                     
-                    <AccessibleInput
-                      label={translateFormText('Disability Classification')}
-                      fieldKey="disabilityClassification"
-                      {...register('disabilityClassification', { required: 'Disability classification is required' })}
-                      error={errors.disabilityClassification?.message}
-                      speak={speak}
-                      speakField={speakField}
-                      isAudioEnabled={isAudioEnabled}
-                      required
-                      className="input-field"
-                      placeholder={translateFormText('e.g., T44, S10, etc.')}
+                    <Controller
+                      name="disabilityClassification"
+                      control={control}
+                      render={({ field }) => (
+                        <AccessibleSelect
+                          label={translateFormText('Disability Classification')}
+                          options={disabilityClassificationOptions}
+                          value={field.value}
+                          onChange={option => field.onChange(option.value)}
+                          isClearable
+                          placeholder="Select or type classification (e.g., T44, S10, etc.)"
+                          error={errors.disabilityClassification}
+                          onFocus={() => speakField('Disability Classification')}
+                          className="w-full"
+                        />
+                      )}
                     />
                   </div>
                   

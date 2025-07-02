@@ -38,7 +38,7 @@ const AccessibleTextarea = React.forwardRef(({
       />
       {error && (
         <span id={`${props.id || 'textarea'}-error`} className="text-red-500 text-sm mt-1 block">
-          {error}
+          {typeof error === 'object' && error.message ? error.message : error}
         </span>
       )}
     </div>

@@ -4,8 +4,9 @@ import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import PlayerRegistration from './pages/PlayerRegistration';
-import PlayerList from './pages/PlayerList';
-import PlayerDetails from './pages/PlayerDetails';
+import IdCardDetails from './pages/IdCardDetails';
+// import PlayerList from './pages/PlayerList';
+// import PlayerDetails from './pages/PlayerDetails';
 import ScreenReader from './components/ScreenReader';
 import AccessibilityHelp from './components/AccessibilityHelp';
 
@@ -24,8 +25,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/register" element={<PlayerRegistration />} />
-              <Route path="/players" element={<PlayerList />} />
-              <Route path="/players/:id" element={<PlayerDetails />} />
+              <Route path="/id-card-details" element={<IdCardDetails />} />
+
             </Routes>
           </main>
           

@@ -10,7 +10,6 @@ const AccessibleSelect = React.forwardRef(({
   error,
   required = false,
   className = '',
-  isSearchable = false,
   isClearable = false,
   isMulti = false,
   ...props
@@ -18,7 +17,6 @@ const AccessibleSelect = React.forwardRef(({
   // Destructure out custom props so they are not passed to the button
   const { speak, speakField, isAudioEnabled, ...selectProps } = props;
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedOption, setSelectedOption] = useState(
     options.find(option => option.value === value) || null
   );
@@ -31,7 +29,6 @@ const AccessibleSelect = React.forwardRef(({
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
-        setSearchTerm('');
         setFocusedIndex(-1);
       }
     };
@@ -59,7 +56,6 @@ const AccessibleSelect = React.forwardRef(({
     const handleResize = () => {
       if (isOpen) {
         setIsOpen(false);
-        setSearchTerm('');
         setFocusedIndex(-1);
       }
     };
@@ -69,17 +65,13 @@ const AccessibleSelect = React.forwardRef(({
   }, [isOpen]);
 
   // Filter options based on search term
-  const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredOptions = options;
 
   const handleSelect = (option) => {
     if (!option) return; // Guard against undefined option
     
     setSelectedOption(option);
     setIsOpen(false);
-    setSearchTerm('');
-    setFocusedIndex(-1);
     
     // Call onChange with the selected option
     if (onChange) {
@@ -110,7 +102,6 @@ const AccessibleSelect = React.forwardRef(({
       }
     } else if (e.key === 'Escape') {
       setIsOpen(false);
-      setSearchTerm('');
       setFocusedIndex(-1);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -128,19 +119,7 @@ const AccessibleSelect = React.forwardRef(({
           prev > 0 ? prev - 1 : filteredOptions.length - 1
         );
       }
-    } else if (e.key === 'Backspace' && isSearchable && !searchTerm) {
-      handleClear(e);
     }
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setFocusedIndex(-1);
-  };
-
-  const handleSearchFocus = () => {
-    setFocusedIndex(0);
-    if (speakField && label) speakField(label);
   };
 
   return (
@@ -158,9 +137,6 @@ const AccessibleSelect = React.forwardRef(({
           ref={ref}
           onClick={e => {
             setIsOpen(!isOpen);
-            if (!isOpen && isSearchable) {
-              setTimeout(() => searchInputRef.current?.focus(), 100);
-            }
             if (speakField && label) speakField(label);
           }}
           onFocus={e => {
@@ -213,22 +189,6 @@ const AccessibleSelect = React.forwardRef(({
             )),
             top: (dropdownRef.current?.getBoundingClientRect().bottom || 0) + 2
           }}>
-            {isSearchable && (
-              <div className="p-2 border-b border-gray-100">
-                <div className="relative">
-                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    onFocus={handleSearchFocus}
-                    placeholder="Search options..."
-                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-            )}
             
             <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
               {filteredOptions.length > 0 ? (
@@ -252,7 +212,7 @@ const AccessibleSelect = React.forwardRef(({
                 ))
               ) : (
                 <div className="px-3 py-4 text-center text-gray-500 text-sm">
-                  {searchTerm ? 'No options found' : 'No options available'}
+                  No options available
                 </div>
               )}
             </div>
@@ -262,7 +222,7 @@ const AccessibleSelect = React.forwardRef(({
 
       {error && (
         <span id={`${props.id || 'select'}-error`} className="text-red-500 text-sm mt-1 block">
-          {error}
+          {typeof error === 'object' && error.message ? error.message : error}
         </span>
       )}
     </div>
